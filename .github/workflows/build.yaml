@@ -9,12 +9,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download dependencies
+      - name: Cache Lucksystem
+        uses: actions/cache@v3
+        with:
+          path: LuckSystem_linux
+          key: ${{ runner.os }}-lucksystem-${{ hashFiles('lbee-repack.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-lucksystem-
+
+      - name: Download Lucksystem
         run: |
           curl -L https://github.com/wetor/LuckSystem/releases/download/v2.3.2/LuckSystem_linux_x86_64.zip --remote-name
           unzip -j LuckSystem_linux_x86_64.zip LuckSystem_linux 
 
-      - name: Download the game files
+      - name: Cache game files
+        uses: actions/cache@v3
+        with:
+          path: litbus
+          key: ${{ runner.os }}-litbus-${{ hashFiles('litbus.zip') }}
+          restore-keys: |
+            ${{ runner.os }}-litbus-
+
+      - name: Download game files
         run: |
           curl "${{ secrets.GAME_DL }}" --output litbus.zip
           unzip litbus.zip -d litbus
@@ -24,9 +40,14 @@ jobs:
           ./lbee-repack.sh -l LuckSystem_linux -o lbee-uncensored litbus
           ./lbee-repack.sh -l LuckSystem_linux -o lbee-censored -c litbus
 
-      - name: Save the output
+      - name: Save the uncensored output
         uses: actions/upload-artifact@v4
         with:
-          path: |
-            lbee-uncensored
-            lbee-censored
+          name: uncensored
+          path: lbee-uncensored/**
+
+      - name: Save the censored output
+        uses: actions/upload-artifact@v4
+        with:
+          name: censored
+          path: lbee-censored/**
