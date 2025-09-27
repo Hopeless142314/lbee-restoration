@@ -6,6 +6,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: Check for secret
+        run: |
+          if [ -z "${{ secrets.GAME_DL }}" ]; then
+            echo "❌ Secret is empty"
+            exit 1
+          else
+            echo "✅ Secret is present"
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -16,7 +26,7 @@ jobs:
 
       - name: Run the script
         run: |
-          curl $GAME_DL --output litbus.zip
+          curl "${{ secrets.GAME_DL }}" --output litbus.zip
           unzip litbus.zip
           ./lbee-repack.sh -l LuckSystem_linux -o lbee-uncensored litbus
           ./lbee-repack.sh -l LuckSystem_linux -o lbee-censored -c litbus
