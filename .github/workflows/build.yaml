@@ -11,7 +11,7 @@ jobs:
 
       - name: Download dependencies
         run: |
-          curl https://github.com/wetor/LuckSystem/releases/download/v2.3.2/LuckSystem_linux_x86_64.zip
+          curl -L https://github.com/wetor/LuckSystem/releases/download/v2.3.2/LuckSystem_linux_x86_64.zip --remote-name
           unzip -j LuckSystem_linux_x86_64.zip LuckSystem_linux 
 
       - name: Run the script
