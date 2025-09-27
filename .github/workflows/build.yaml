@@ -40,14 +40,20 @@ jobs:
           ./lbee-repack.sh -l LuckSystem_linux -o lbee-uncensored litbus
           ./lbee-repack.sh -l LuckSystem_linux -o lbee-censored -c litbus
 
+      - name: Zip the output
+        run: |
+          zip -r lbee-uncensored.zip lbee-uncensored
+          zip -r lbee-censored.zip lbee-censored
+
+
       - name: Save the uncensored output
         uses: actions/upload-artifact@v4
         with:
           name: uncensored
-          path: lbee-uncensored/**
+          path: lbee-uncensored.zip
 
       - name: Save the censored output
         uses: actions/upload-artifact@v4
         with:
           name: censored
-          path: lbee-censored/**
+          path: lbee-censored.zip
