@@ -1,0 +1,32 @@
+name: Build the Patch
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download dependencies
+        run: |
+          curl https://github.com/wetor/LuckSystem/releases/download/v2.3.2/LuckSystem_linux_x86_64.zip
+          unzip -j LuckSystem_linux_x86_64.zip LuckSystem_linux 
+
+      - name: Run the script
+        run: |
+          curl $GAME_DL --output litbus.zip
+          unzip litbus.zip
+          ./lbee-repack.sh -l LuckSystem_linux -o lbee-uncensored litbus
+          ./lbee-repack.sh -l LuckSystem_linux -o lbee-censored -c litbus
+
+      - name: Save the output
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            lbee-uncensored
+            lbee-censored
+
+        env:
+          GAME_DL: ${{ secrets.GAME_DL }}
