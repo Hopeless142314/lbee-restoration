@@ -18,6 +18,7 @@ jobs:
             ${{ runner.os }}-lucksystem-
 
       - name: Download Lucksystem
+        if: steps.cache-lucksystem.outputs.cache-hit != 'true'
         run: |
           curl -L https://github.com/wetor/LuckSystem/releases/download/v2.3.2/LuckSystem_linux_x86_64.zip --remote-name
           unzip -j LuckSystem_linux_x86_64.zip LuckSystem_linux 
@@ -31,6 +32,7 @@ jobs:
             ${{ runner.os }}-litbus-
 
       - name: Download game files
+        if: steps.cache-gamefiles.outputs.cache-hit != 'true'
         run: |
           curl "${{ secrets.GAME_DL }}" --output litbus.zip
           unzip litbus.zip -d litbus
