@@ -6,16 +6,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Check for secret
-        run: |
-          if [ -z "${{ secrets.GAME_DL }}" ]; then
-            echo "❌ Secret is empty"
-            exit 1
-          else
-            echo "✅ Secret is present"
-          fi
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -24,10 +14,13 @@ jobs:
           curl -L https://github.com/wetor/LuckSystem/releases/download/v2.3.2/LuckSystem_linux_x86_64.zip --remote-name
           unzip -j LuckSystem_linux_x86_64.zip LuckSystem_linux 
 
-      - name: Run the script
+      - name: Download the game files
         run: |
           curl "${{ secrets.GAME_DL }}" --output litbus.zip
-          unzip litbus.zip
+          unzip litbus.zip -d litbus
+
+      - name: Run the script
+        run: |
           ./lbee-repack.sh -l LuckSystem_linux -o lbee-uncensored litbus
           ./lbee-repack.sh -l LuckSystem_linux -o lbee-censored -c litbus
 
@@ -37,6 +30,3 @@ jobs:
           path: |
             lbee-uncensored
             lbee-censored
-
-        env:
-          GAME_DL: ${{ secrets.GAME_DL }}
